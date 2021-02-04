@@ -1,0 +1,1 @@
+Blazor webassembly front end application
