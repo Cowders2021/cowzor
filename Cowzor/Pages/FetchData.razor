@@ -5,12 +5,13 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+@if (forecast == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+    <div>@forecast.city.name</div>
     <table class="table">
         <thead>
             <tr>
@@ -21,13 +22,14 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var item in forecast.list)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@(DateTimeOffset.FromUnixTimeSeconds(item.dt).LocalDateTime)</td>
+                    <td>@(item.main.temp -273.15)</td>
+                    <td></td>
+                    @*<td>@forecast.TemperatureF</td>*@
+                    <td>@item.weather.First().description</td>
                 </tr>
             }
         </tbody>
@@ -35,11 +37,16 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    //private WeatherForecast[] forecasts;
+    private FkaWeatherforecast forecast;
+    private const string api = "https://samples.openweathermap.org/data/2.5/forecast?id=524901&appid=b1b15e88fa797225412429c1c50c122a1";
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        System.Console.Write("Get city ");
+        //forecasts = await Http.GetFromJsonAsync<FkaWeatherforecast>("https://cors-anywhere.herokuapp.com/" + api);
+        forecast = await Http.GetFromJsonAsync<FkaWeatherforecast>("https://cors-anywhere.herokuapp.com/" + api);
+        System.Console.Write("Got city " + forecast.city);
     }
 
     public class WeatherForecast
@@ -51,5 +58,81 @@ else
         public string Summary { get; set; }
 
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    public class Main
+    {
+        public double temp { get; set; }
+        public double temp_min { get; set; }
+        public double temp_max { get; set; }
+        public double pressure { get; set; }
+        public double sea_level { get; set; }
+        public double grnd_level { get; set; }
+        public int humidity { get; set; }
+        public double temp_kf { get; set; }
+    }
+
+    public class Weather
+    {
+        public int id { get; set; }
+        public string main { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
+    }
+
+    public class Clouds
+    {
+        public int all { get; set; }
+    }
+
+    public class Wind
+    {
+        public double speed { get; set; }
+        public double deg { get; set; }
+    }
+
+    public class Snow
+    {
+        public double? _3h { get; set; }
+    }
+
+    public class Sys
+    {
+        public string pod { get; set; }
+    }
+
+    public class List
+    {
+        public int dt { get; set; }
+        public Main main { get; set; }
+        public List<Weather> weather { get; set; }
+        public Clouds clouds { get; set; }
+        public Wind wind { get; set; }
+        public Snow snow { get; set; }
+        public Sys sys { get; set; }
+        public string dt_txt { get; set; }
+    }
+
+    public class Coord
+    {
+        public double lat { get; set; }
+        public double lon { get; set; }
+    }
+
+    public class City
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public Coord coord { get; set; }
+        public string country { get; set; }
+    }
+
+    public class FkaWeatherforecast
+    {
+        public string cod { get; set; }
+        public double message { get; set; }
+        public int cnt { get; set; }
+        public List<List> list { get; set; }
+        public City city { get; set; }
     }
 }
