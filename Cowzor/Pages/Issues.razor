@@ -28,13 +28,24 @@ else
                     <td><button class="fka-btn-warning" @onclick=@(async (e) => DeleteItem(e, issue.id))>Slett</button></td>
                 </tr>
             }
+            @foreach (var issue in localItems)
+            {
+                <tr>
+                    <td></td>
+                    <td><input @bind="issue.text" placeholder="Text" /></td>
+                    <td><input @bind="issue.desctiption" placeholder="Beskrivelse"/></td>
+                    <td><button class="fka-btn-primary" @onclick=@(async (e) => CreateIssue(e, issue))>Lagre</button></td>
+                </tr>
+            }
         </tbody>
     </table>
+    <button class="fka-btn-primary" @onclick="AddNewIssue">Legg til</button>
 }
 
 @code {
 
     private List<Issue> issues = null;
+    private List<IssueBase> localItems = new List<IssueBase>();
 
     private const string api = "https://cowderspictures.azurewebsites.net/api/Issues";
     protected override async Task OnInitializedAsync()
@@ -51,7 +62,34 @@ else
     {
         issues = issues.Where((i) => i.id != id).ToList();
         await Http.DeleteAsync($"{api}/{id}");
-        await getFromServer();
+        //await getFromServer();
+    }
+
+    private void AddNewIssue()
+    {
+        localItems.Add(new IssueBase());
+    }
+
+    private async void CreateIssue(MouseEventArgs e, IssueBase localIssue)
+    {
+        int id = 1;
+        while (issues.Any(i => i.id == id))
+        {
+            id++;
+        }
+
+        var issue = new Issue()
+        {
+            id = id,
+            text = localIssue.text,
+            desctiption = localIssue.text,
+            customerId = 0
+        };
+
+        issues.Add(issue);
+        localItems = localItems.Where(i => i != localIssue).ToList();
+        //await Http.PutAsJsonAsync<Issue>($"{api}/{id}", issue);
+        //await getFromServer();
     }
 
     private async Task getFromServer()
@@ -60,10 +98,14 @@ else
         StateHasChanged();
     }
 
-    private class Issue
+    private class Issue : IssueBase
     {
         public int id { get; set; }
         public int customerId { get; set; }
+    }
+
+    private class IssueBase
+    {
         public string text { get; set; }
         public string desctiption { get; set; }
     }

@@ -19,6 +19,11 @@ a, .btn-link {
     background-color: #d70c28;
 }
 
+.fka-btn-primary {
+    color: white;
+    background-color: #018d45;
+}
+
 app {
     position: relative;
     display: flex;
