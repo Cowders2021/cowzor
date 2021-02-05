@@ -1,24 +1,23 @@
-@page "/fetchdata"
+﻿@page "/fetchdata"
 @inject HttpClient Http
 
-<h1>Weather forecast</h1>
+<h1>Værmelding</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
+<p>Slik blir været på gården din i dag @(forecast != null ? ("(" + forecast.city.name + ")"): "")</p>
 
 @if (forecast == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Henter data...</em></p>
 }
 else
 {
-    <div>@forecast.city.name</div>
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
+                <th>Dato</th>
                 <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Vind (m/s)</th>
+                <th>Beskrivelse</th>
             </tr>
         </thead>
         <tbody>
@@ -26,9 +25,8 @@ else
             {
                 <tr>
                     <td>@(DateTimeOffset.FromUnixTimeSeconds(item.dt).LocalDateTime)</td>
-                    <td>@(item.main.temp -273.15)</td>
-                    <td></td>
-                    @*<td>@forecast.TemperatureF</td>*@
+                    <td>@(Math.Round(item.main.tempCelsius))</td>
+                    <td>@item.wind.speed</td>
                     <td>@item.weather.First().description</td>
                 </tr>
             }
@@ -37,27 +35,13 @@ else
 }
 
 @code {
-    //private WeatherForecast[] forecasts;
     private FkaWeatherforecast forecast;
     private const string api = "http://api.openweathermap.org/data/2.5/forecast?q=Oslo&appid=c0213b955fb954e0391ee8fedfdba63c";
 
     protected override async Task OnInitializedAsync()
     {
-        System.Console.Write("Get city ");
-        //forecasts = await Http.GetFromJsonAsync<FkaWeatherforecast>("https://cors-anywhere.herokuapp.com/" + api);
-        forecast = await Http.GetFromJsonAsync<FkaWeatherforecast>("https://cors-anywhere.herokuapp.com/" + api);
-        System.Console.Write("Got city " + forecast.city);
-    }
-
-    public class WeatherForecast
-    {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        //forecast = await Http.GetFromJsonAsync<FkaWeatherforecast>("https://cors-anywhere.herokuapp.com/" + api);
+        forecast = await Http.GetFromJsonAsync<FkaWeatherforecast>("sample-data/weather.json");
     }
 
     public class Main
@@ -70,6 +54,7 @@ else
         public double grnd_level { get; set; }
         public int humidity { get; set; }
         public double temp_kf { get; set; }
+        public double tempCelsius => temp - 273.15;
     }
 
     public class Weather
