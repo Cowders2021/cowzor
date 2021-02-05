@@ -50,6 +50,7 @@ else
     private async void DeleteItem(MouseEventArgs e, int id)
     {
         issues = issues.Where((i) => i.id != id).ToList();
+        await Http.DeleteAsync($"{api}/{id}");
         await getFromServer();
     }
 
