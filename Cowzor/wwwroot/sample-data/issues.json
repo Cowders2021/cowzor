@@ -1,0 +1,16 @@
+﻿[
+  {
+    "id": 1,
+    "customerId": 42,
+    "productId": 10006,
+    "text": "Ugress",
+    "desctiption": "Mye ugress i mellomhøyde nær skog som heller i østlig retning"
+  },
+  {
+    "id": 2,
+    "customerId": 42,
+    "productId": 10006,
+    "text": "Ugress her også!!!",
+    "desctiption": "Mye ugress når jeg myser lett mot sola i fullmåne"
+  }
+]

@@ -4,6 +4,11 @@
       "route": "/fetchdata",
       "serve": "/index.html",
       "statusCode": 200
+    },
+    {
+      "route": "/issues",
+      "serve": "/index.html",
+      "statusCode": 200
     }
   ]
 }

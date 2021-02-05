@@ -14,6 +14,11 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
+.fka-btn-warning {
+    color: white;
+    background-color: #d70c28;
+}
+
 app {
     position: relative;
     display: flex;
